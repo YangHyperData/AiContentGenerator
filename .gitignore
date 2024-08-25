@@ -1,0 +1,3 @@
+# Logs
+.env.local
+node_modules
