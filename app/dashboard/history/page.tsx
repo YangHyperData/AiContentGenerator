@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Templates from './../../(data)/Templates';
 import { Button } from '@/components/ui/button';
-import { db } from './../../../utils/db'; 
+import { db } from './../../../utils/db';
 import { AIOutput } from '@/utils/schema';
 
 import moment from 'moment';
+import { useUser } from '@clerk/nextjs';
 
 export interface HISTORY {
   id: number;
@@ -18,14 +19,17 @@ export interface HISTORY {
 }
 
 const History = () => {
+  const { user } = useUser();
   const [data, setData] = useState<HISTORY[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchHistory = async () => {
     setLoading(true);
     try {
+      const userEmail = user?.primaryEmailAddress?.emailAddress; 
       const result = await db.select().from(AIOutput).execute();
-      setData(result);
+      const filteredData = result.filter(item => item.createdBy === userEmail);
+      setData(filteredData);
     } catch (error) {
       console.error('Error fetching history:', error);
     }
@@ -34,9 +38,9 @@ const History = () => {
 
   useEffect(() => {
     fetchHistory();
-  }, []);
+  }, [user]);
 
-  // Function to format date
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -74,11 +78,11 @@ const History = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th style={{  padding: '0.5rem' }} className='bg-gray-200'>Template</th>
-              <th style={{  padding: '0.5rem' }} className='bg-gray-200'>AI Response</th>
-              <th style={{  padding: '0.5rem' }} className='bg-gray-200'>Date</th>
-              <th style={{  padding: '0.5rem' }} className='bg-gray-200'>Words</th>
-              <th style={{  padding: '0.5rem' }} className='bg-gray-200'>Copy</th>
+              <th style={{ padding: '0.5rem' }} className='bg-gray-200'>Template</th>
+              <th style={{ padding: '0.5rem' }} className='bg-gray-200'>AI Response</th>
+              <th style={{ padding: '0.5rem' }} className='bg-gray-200'>Date</th>
+              <th style={{ padding: '0.5rem' }} className='bg-gray-200'>Words</th>
+              <th style={{ padding: '0.5rem' }} className='bg-gray-200'>Copy</th>
             </tr>
           </thead>
           <tbody>
