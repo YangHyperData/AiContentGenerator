@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import SearchSection from './_components/SearchSection'
 import TemplateListSection from './_components/TemplateListSection'
+import HotTemplateListSection from './_components/HotTemplateListSection'
 
 function Dashboard() {
 
@@ -11,6 +12,8 @@ function Dashboard() {
     <div>
       {/* Search Section */}
       <SearchSection onSearchInput={(value: string) => setUserSearchInput(value)} />
+      {/* HotTemplate Icon Section */}
+      <HotTemplateListSection/>
       {/* Template List Section */}
       <TemplateListSection userSearchInput={userSearchInput} />
     </div>
